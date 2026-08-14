@@ -8,6 +8,15 @@ const parchemninRoutes = require('./routes/parchemin');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
+console.log(
+  'ADMIN_PASSWORD_HASH présent:',
+  Boolean(process.env.ADMIN_PASSWORD_HASH)
+);
+
+console.log(
+  'SESSION_SECRET présent:',
+  Boolean(process.env.SESSION_SECRET)
+);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -44,3 +53,4 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = app;
+
