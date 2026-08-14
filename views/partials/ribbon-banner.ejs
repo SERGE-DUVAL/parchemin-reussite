@@ -1,0 +1,27 @@
+<%
+  // locals attendus: idSuffix, text
+%>
+<div class="bottom-banner-wrap">
+  <svg viewBox="0 0 340 56" class="bottom-banner-svg" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id="bannerGrad-<%= idSuffix %>" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#f3d98b"/>
+        <stop offset="55%" stop-color="#d4af37"/>
+        <stop offset="100%" stop-color="#96700a"/>
+      </linearGradient>
+    </defs>
+
+    <!-- pan gauche (plie, attache) -->
+    <polygon points="0,10 40,10 40,50 20,34 0,50" fill="url(#bannerGrad-<%= idSuffix %>)" stroke="#7a5a05" stroke-width="1.4"/>
+    <polygon points="30,4 40,4 40,20" fill="#7a5a05" opacity="0.45"/>
+
+    <!-- pan droit (plie, attache) -->
+    <polygon points="340,10 300,10 300,50 320,34 340,50" fill="url(#bannerGrad-<%= idSuffix %>)" stroke="#7a5a05" stroke-width="1.4"/>
+    <polygon points="310,4 300,4 300,20" fill="#7a5a05" opacity="0.45"/>
+
+    <!-- bandeau central -->
+    <rect x="28" y="4" width="284" height="30" rx="1.5" fill="url(#bannerGrad-<%= idSuffix %>)" stroke="#7a5a05" stroke-width="1.6"/>
+    <rect x="28" y="4" width="284" height="30" rx="1.5" fill="none" stroke="#fffaea" stroke-width="0.6" opacity="0.5"/>
+  </svg>
+  <div class="bottom-banner-text"><%= text %></div>
+</div>

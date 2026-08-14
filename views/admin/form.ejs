@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= student ? 'Modifier' : 'Nouveau' %> parchemin — Famille Tepomo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Famille Tepomo <small>ADMINISTRATION DES PARCHEMINS</small></div>
+    <a href="/admin">&larr; Retour</a>
+  </div>
+
+  <div class="container">
+    <h1><%= student ? 'Modifier le parchemin' : 'Nouveau parchemin' %></h1>
+
+    <div class="card">
+      <form class="stacked" method="POST"
+        action="<%= student ? '/admin/students/' + student.id + '/modifier' : '/admin/students' %>">
+
+        <label for="prenom">Prenom</label>
+        <input type="text" id="prenom" name="prenom" required value="<%= student ? student.prenom : '' %>" />
+
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" required value="<%= student ? student.nom : '' %>" />
+
+        <label for="classe">Classe</label>
+        <input type="text" id="classe" name="classe" required placeholder="ex: Terminale D"
+          value="<%= student ? student.classe : '' %>" />
+
+        <label for="anneeAcademique">Annee academique</label>
+        <input type="text" id="anneeAcademique" name="anneeAcademique" required
+          value="<%= student ? student.anneeAcademique : defaultAnnee %>" />
+
+        <label>Type de parchemin</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="type" value="diplome" id="type-diplome"
+              <%= (!student || student.type === 'diplome') ? 'checked' : '' %> />
+            Diplome (fin de cycle)
+          </label>
+          <label>
+            <input type="radio" name="type" value="passage" id="type-passage"
+              <%= (student && student.type === 'passage') ? 'checked' : '' %> />
+            Passage en classe superieure
+          </label>
+        </div>
+
+        <div id="diplome-field">
+          <label for="diplome">Intitule du diplome (facultatif)</label>
+          <input type="text" id="diplome" name="diplome"
+            placeholder="Laisse vide pour deduire automatiquement depuis la classe"
+            value="<%= student ? student.diplome : '' %>" />
+          <div id="diplome-hint" style="margin:-10px 0 16px; font-size:0.85rem; color:#8a7440;"></div>
+        </div>
+
+        <label for="dateEmission">Date d'emission</label>
+        <input type="date" id="dateEmission" name="dateEmission"
+          value="<%= student ? student.dateEmission : new Date().toISOString().slice(0,10) %>" />
+
+        <button type="submit" class="btn"><%= student ? 'Enregistrer les modifications' : 'Creer le parchemin' %></button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const diplomeRadio = document.getElementById('type-diplome');
+    const passageRadio = document.getElementById('type-passage');
+    const diplomeField = document.getElementById('diplome-field');
+    const classeInput = document.getElementById('classe');
+    const diplomeInput = document.getElementById('diplome');
+    const diplomeHint = document.getElementById('diplome-hint');
+
+    function toggleDiplomeField() {
+      diplomeField.style.display = diplomeRadio.checked ? 'block' : 'none';
+    }
+
+    diplomeRadio.addEventListener('change', toggleDiplomeField);
+    passageRadio.addEventListener('change', toggleDiplomeField);
+    toggleDiplomeField();
+
+    // Reproduit cote client la deduction du diplome camerounais faite par
+    // utils/diplome.js, uniquement pour l'aperçu affiche a l'admin.
+    function suggestDiplome(classeRaw) {
+      const classe = (classeRaw || '').trim();
+      const flat = classe.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+      if (/^(3\s*e?me|troisieme)\b/.test(flat)) return 'B.E.P.C.';
+
+      let match = flat.match(/^(?:premiere|1\s*ere|1\s*re)\b(.*)$/);
+      if (match) {
+        const serie = match[1].trim().replace(/^[,\-\s]+/, '').toUpperCase();
+        return serie ? `Probatoire, série ${serie}` : 'Probatoire';
+      }
+
+      match = flat.match(/^(?:terminale|tle)\b(.*)$/);
+      if (match) {
+        const serie = match[1].trim().replace(/^[,\-\s]+/, '').toUpperCase();
+        return serie ? `Baccalauréat, série ${serie}` : 'Baccalauréat';
+      }
+
+      return '';
+    }
+
+    function updateDiplomeHint() {
+      if (diplomeInput.value.trim()) {
+        diplomeHint.textContent = '';
+        return;
+      }
+      const suggestion = suggestDiplome(classeInput.value);
+      diplomeHint.textContent = suggestion
+        ? `Sera affiche automatiquement : "${suggestion}"`
+        : "Classe non reconnue : indique un intitule manuellement si besoin.";
+    }
+
+    classeInput.addEventListener('input', updateDiplomeHint);
+    diplomeInput.addEventListener('input', updateDiplomeHint);
+    updateDiplomeHint();
+  </script>
+</body>
+</html>

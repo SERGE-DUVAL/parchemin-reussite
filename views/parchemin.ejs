@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parchemin de <%= student.prenom %> <%= student.nom %> — Famille Tepomo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/parchemin.css" />
+</head>
+<body>
+
+  <%
+    const isDiplome = student.type === 'diplome';
+    const nomComplet = student.prenom + ' ' + student.nom;
+    const dateParts = student.dateEmission.split('-');
+    const moisNoms = ['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+    const dateFormatee = dateParts.length === 3
+      ? `${parseInt(dateParts[2],10)} ${moisNoms[parseInt(dateParts[1],10)-1]} ${dateParts[0]}`
+      : student.dateEmission;
+    const watermarkWords = ['Félicitations','Excellence','Réussite','Travail','Persévérance'];
+    const watermarkLine = watermarkWords.join(' &bull; ') + ' &bull; ';
+    const medalLabel = isDiplome
+      ? ['Excellence', 'Mérite', 'Persévérance']
+      : ['Courage', 'Persévérance', 'Progrès'];
+  %>
+
+  <div class="toolbar no-print">
+    <button id="download-btn">T&eacute;l&eacute;charger en PDF</button>
+    <button id="share-btn" class="btn-outline">Partager</button>
+  </div>
+
+  <div id="parchemin-content" data-share-url="<%= shareUrl %>" data-share-title="Parchemin de <%= nomComplet %> — Famille Tepomo">
+
+    <!-- RECTO -->
+    <div class="parchemin-page <%= isDiplome ? 'type-diplome' : 'type-passage' %>">
+      <div class="frame">
+        <div class="watermark">
+          <% for (let i = 0; i < 24; i++) { %><span><%- watermarkLine %></span><% } %>
+        </div>
+
+        <div class="corner tl"><%- include('partials/corner') %></div>
+        <div class="corner tr"><%- include('partials/corner') %></div>
+        <div class="corner bl"><%- include('partials/corner') %></div>
+        <div class="corner br"><%- include('partials/corner') %></div>
+
+        <div class="content">
+          <%- include('partials/emblem', { idSuffix: 'recto-top' }) %>
+
+          <h1 class="kicker">
+            <%= isDiplome ? 'Parchemin de Reussite Scolaire' : 'Parchemin de Felicitations Scolaires' %>
+          </h1>
+          <div class="subtitle">Excellence Scolaire &mdash; Annee academique <%= student.anneeAcademique %></div>
+
+          <p class="intro">
+            La Famille Tepomo a l'immense plaisir et le grand honneur de presenter ses
+          </p>
+
+          <div class="felicitations">FELICITATIONS</div>
+          <div class="to">a</div>
+          <div class="student-name"><%= nomComplet %></div>
+
+          <div class="classe-row">
+            <span>&Eacute;l&egrave;ve de la classe de</span>
+            <span class="classe-plaque"><%= student.classe %></span>
+          </div>
+
+          <% if (isDiplome) { %>
+            <p class="body-text">
+              Pour avoir brillamment acheve son parcours scolaire et obtenu avec merite son
+            </p>
+            <span class="diplome-callout"><%= diplomeAffiche %></span>
+            <p class="body-text">
+              La Famille Tepomo, reconnaissant les efforts, la perseverance, la discipline et le
+              travail accompli, tient a saluer cette belle reussite et a encourager
+              <%= student.prenom %> a poursuivre son chemin avec ambition, courage et determination.
+            </p>
+          <% } else { %>
+            <p class="body-text">
+              Pour avoir franchi avec succes et brio son annee scolaire <%= student.anneeAcademique %>
+              et pour son admission meritee en
+            </p>
+            <span class="diplome-callout">Classe Superieure</span>
+            <p class="body-text">
+              La Famille Tepomo, reconnaissant les efforts, la perseverance et le serieux dont
+              <%= student.prenom %> a fait preuve, l'encourage a poursuivre son chemin avec la meme
+              ambition et la meme determination.
+            </p>
+          <% } %>
+
+          <div class="footer-info-row">
+            <div class="info-lines">
+              <strong>Fait en l'honneur de :</strong> <%= nomComplet.toUpperCase() %><br />
+              <strong>Ann&eacute;e acad&eacute;mique :</strong> <%= student.anneeAcademique %><br />
+              <strong>Classe :</strong> <%= student.classe %>
+            </div>
+            <div class="signature-block">
+              <div class="signature-cursive">Famille Tepomo</div>
+              <div class="signature-caption">LA FAMILLE TEPOMO</div>
+            </div>
+          </div>
+
+          <div class="footer-bottom-row">
+            <%- include('partials/medal', { idSuffix: 'recto-medal', isDiplome: isDiplome, labelLines: medalLabel }) %>
+            <div class="footer-brand">
+              <div class="brand-name">FAMILLE TEPOMO</div>
+            </div>
+          </div>
+
+          <%- include('partials/ribbon-banner', { idSuffix: 'recto-banner', text: 'Amour et Fraternité' }) %>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERSO -->
+    <div class="parchemin-page">
+      <div class="frame">
+        <div class="watermark">
+          <% for (let i = 0; i < 24; i++) { %><span><%- watermarkLine %></span><% } %>
+        </div>
+
+        <div class="corner tl"><%- include('partials/corner') %></div>
+        <div class="corner tr"><%- include('partials/corner') %></div>
+        <div class="corner bl"><%- include('partials/corner') %></div>
+        <div class="corner br"><%- include('partials/corner') %></div>
+
+        <div class="content verso-content">
+          <%- include('partials/graduation-emblem') %>
+
+          <h2 class="script-title">F&eacute;licitations</h2>
+          <div class="sub-caps">Pour ton travail !</div>
+
+          <p>Le travail, la pers&eacute;v&eacute;rance et la discipline sont les cl&eacute;s de toute r&eacute;ussite.</p>
+          <p>
+            Nous sommes fiers de <%= student.prenom %> et de tout le chemin parcouru.
+            Continue &agrave; croire en toi, &agrave; viser l'excellence et &agrave; faire de tes r&ecirc;ves une r&eacute;alit&eacute;.
+          </p>
+
+          <div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
+
+          <div class="thanks-heading">
+            <span class="script-sub">Un mot de remerciement</span>
+            <span class="caps-sub">Aux parents</span>
+          </div>
+
+          <p class="left">Chers parents,</p>
+          <p class="left">
+            Derri&egrave;re chaque r&eacute;ussite se trouvent des sacrifices, des nuits blanches, des pri&egrave;res
+            et une patience sans limite. Votre amour, votre accompagnement et vos encouragements
+            sont le socle sur lequel <%= student.prenom %> b&acirc;tit son avenir.
+          </p>
+          <p class="left">
+            La Famille Tepomo vous adresse ses sinc&egrave;res remerciements pour votre pr&eacute;sence
+            constante et pour tous les efforts consentis afin d'accompagner <%= student.prenom %>
+            vers la r&eacute;ussite. Merci pour votre confiance.
+          </p>
+          <p class="emphasis">Que cette r&eacute;ussite soit le d&eacute;but de nombreuses autres victoires.</p>
+
+          <div class="verso-emblem-wrap">
+            <div class="verso-crest">
+              <div class="emblem-circle small"><span class="emblem-monogram">FT</span></div>
+              <div class="brand-name">FAMILLE TEPOMO</div>
+            </div>
+            <%- include('partials/ribbon-banner', { idSuffix: 'verso-banner', text: 'Amour et Fraternité' }) %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="/js/parchemin.js"></script>
+</body>
+</html>

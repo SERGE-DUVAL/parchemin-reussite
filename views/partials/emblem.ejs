@@ -1,0 +1,24 @@
+<%
+  // locals attendus: idSuffix (string unique par instance)
+%>
+<div class="emblem">
+  <svg class="crown-icon" viewBox="0 0 100 55">
+    <path d="M8,50 L8,26 L24,38 L38,14 L50,32 L62,14 L76,38 L92,26 L92,50 Z" fill="#d4af37" stroke="#7a5a05" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="8" cy="22" r="5.5" fill="#d4af37" stroke="#7a5a05" stroke-width="1.6"/>
+    <circle cx="38" cy="10" r="5.5" fill="#d4af37" stroke="#7a5a05" stroke-width="1.6"/>
+    <circle cx="92" cy="22" r="5.5" fill="#d4af37" stroke="#7a5a05" stroke-width="1.6"/>
+  </svg>
+  <div class="emblem-circle"><span class="emblem-monogram">FT</span></div>
+  <div class="ribbon-wrap">
+    <svg class="ribbon-shape" viewBox="0 0 220 34" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="ribbonGrad-<%= idSuffix %>" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f3d98b"/>
+          <stop offset="100%" stop-color="#b8860b"/>
+        </linearGradient>
+      </defs>
+      <polygon points="10,2 210,2 220,17 210,32 10,32 0,17" fill="url(#ribbonGrad-<%= idSuffix %>)" stroke="#7a5a05" stroke-width="1.5"/>
+    </svg>
+    <div class="ribbon-text">Amour et Fraternit&eacute;</div>
+  </div>
+</div>

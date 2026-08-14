@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administration — Parchemins Famille Tepomo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Famille Tepomo <small>ADMINISTRATION DES PARCHEMINS</small></div>
+    <a href="/admin/logout">Se deconnecter</a>
+  </div>
+
+  <div class="container">
+    <div class="actions-row">
+      <h1 style="margin:0;">Parchemins (<%= students.length %>)</h1>
+      <a class="btn" href="/admin/nouveau">+ Nouveau parchemin</a>
+    </div>
+
+    <div class="card">
+      <% if (students.length === 0) { %>
+        <div class="empty-state">Aucun parchemin pour le moment. Cree le premier !</div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Eleve</th>
+              <th>Classe</th>
+              <th>Annee</th>
+              <th>Type</th>
+              <th>Lien</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% students.forEach(function (s) { %>
+              <tr>
+                <td><%= s.prenom %> <%= s.nom %></td>
+                <td><%= s.classe %></td>
+                <td><%= s.anneeAcademique %></td>
+                <td>
+                  <% if (s.type === 'diplome') { %>
+                    <span class="badge badge-diplome">Diplome</span>
+                  <% } else { %>
+                    <span class="badge badge-passage">Passage classe sup.</span>
+                  <% } %>
+                </td>
+                <td><a href="/parchemin/<%= s.slug %>" target="_blank">Voir le parchemin</a></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="btn btn-secondary" href="/admin/students/<%= s.id %>/modifier">Modifier</a>
+                    <form method="POST" action="/admin/students/<%= s.id %>/supprimer"
+                      onsubmit="return confirm('Supprimer le parchemin de <%= s.prenom %> <%= s.nom %> ?');">
+                      <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
