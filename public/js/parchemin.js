@@ -8,13 +8,24 @@ async function waitForFonts() {
   }
 }
 
+// Taille physique exacte d'une page A4 a 96dpi (210mm x 297mm). On force
+// html2canvas a capturer a cette taille fixe, plutot que de se baser sur les
+// dimensions mesurees de l'element (scrollWidth/scrollHeight), qui peuvent
+// etre faussees par le filigrane qui deborde volontairement du cadre (pour
+// couvrir les coins une fois pivote) ou reduites sur mobile a cause de
+// max-width:100% — les deux faisaient sortir un PDF deforme ou tronque.
+const A4_WIDTH_PX = Math.round((210 / 25.4) * 96);
+const A4_HEIGHT_PX = Math.round((297 / 25.4) * 96);
+
 async function capturePageToCanvas(pageEl, scale) {
   return html2canvas(pageEl, {
     scale,
     useCORS: true,
     backgroundColor: '#ffffff',
-    windowWidth: pageEl.scrollWidth,
-    windowHeight: pageEl.scrollHeight,
+    width: A4_WIDTH_PX,
+    height: A4_HEIGHT_PX,
+    windowWidth: A4_WIDTH_PX,
+    windowHeight: A4_HEIGHT_PX,
   });
 }
 

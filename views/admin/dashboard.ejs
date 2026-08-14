@@ -30,8 +30,7 @@
               <th>Classe</th>
               <th>Annee</th>
               <th>Type</th>
-              <th>Lien</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -47,9 +46,9 @@
                     <span class="badge badge-passage">Passage classe sup.</span>
                   <% } %>
                 </td>
-                <td><a href="/parchemin/<%= s.slug %>" target="_blank">Voir le parchemin</a></td>
                 <td>
                   <div class="row-actions">
+                    <a class="btn" href="/parchemin/<%= s.slug %>" target="_blank">Voir le parchemin</a>
                     <a class="btn btn-secondary" href="/admin/students/<%= s.id %>/modifier">Modifier</a>
                     <form method="POST" action="/admin/students/<%= s.id %>/supprimer"
                       onsubmit="return confirm('Supprimer le parchemin de <%= s.prenom %> <%= s.nom %> ?');">

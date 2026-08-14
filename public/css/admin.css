@@ -157,7 +157,13 @@ th {
 
 .row-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+.row-actions .btn {
+  padding: 8px 14px;
+  font-size: 0.85rem;
 }
 
 .row-actions form {
