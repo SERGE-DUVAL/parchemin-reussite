@@ -37,5 +37,31 @@
     "dateEmission": "2026-08-14",
     "createdAt": "2026-08-14T05:20:19.108Z",
     "updatedAt": "2026-08-14T05:20:19.108Z"
+  },
+  {
+    "id": "3065dc9b-d2cc-4cdf-a0fa-0da7ef9f0498",
+    "slug": "hghuj-k-8976da",
+    "prenom": "hghuj",
+    "nom": "k,",
+    "classe": "terminale C",
+    "anneeAcademique": "2025/2026",
+    "type": "diplome",
+    "diplome": "",
+    "dateEmission": "2026-08-15",
+    "createdAt": "2026-08-15T22:45:50.963Z",
+    "updatedAt": "2026-08-15T22:45:50.963Z"
+  },
+  {
+    "id": "0b4e480b-b55f-425f-aedb-40b89050ccb2",
+    "slug": "ghdawh-angha-fb4d95",
+    "prenom": "ghdawh",
+    "nom": "angha",
+    "classe": "6 eme",
+    "anneeAcademique": "2025/2026",
+    "type": "passage",
+    "diplome": "",
+    "dateEmission": "2026-08-15",
+    "createdAt": "2026-08-15T23:21:38.057Z",
+    "updatedAt": "2026-08-15T23:21:38.057Z"
   }
 ]

@@ -44,6 +44,15 @@ app.use((req, res) => {
   res.status(404).render('404');
 });
 
+// Filet de securite : capture toute erreur non geree (ex: panne du stockage)
+// pour eviter la page blanche "Internal Server Error" par defaut d'Express,
+// et journalise le detail cote serveur (visible dans les logs Vercel) pour
+// pouvoir diagnostiquer sans exposer les details techniques au visiteur.
+app.use((err, req, res, next) => {
+  console.error('Erreur non geree:', err);
+  res.status(500).render('500');
+});
+
 const PORT = process.env.PORT || 3000;
 
 if (process.env.NODE_ENV !== 'production') {

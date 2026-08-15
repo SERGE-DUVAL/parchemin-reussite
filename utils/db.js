@@ -1,17 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+const { put, get } = require('@vercel/blob');
 const crypto = require('crypto');
 
-const DB_FILE = path.join(__dirname, '..', 'data', 'students.json');
-
-function readStudents() {
-  const raw = fs.readFileSync(DB_FILE, 'utf-8');
-  return JSON.parse(raw || '[]');
-}
-
-function writeStudents(students) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(students, null, 2), 'utf-8');
-}
+// Toutes les donnees sont stockees dans un seul objet JSON, dans Vercel Blob.
+// Vercel Functions tournent sur un systeme de fichiers en lecture seule en
+// production : impossible d'ecrire dans un fichier local comme avant. Le
+// Blob store est la seule persistance qui fonctionne a la fois en local et
+// en production sur Vercel.
+const BLOB_PATHNAME = 'students.json';
 
 function slugify(text) {
   return text
@@ -29,20 +24,45 @@ function makeSlug(prenom, nom) {
   return `${base}-${suffix}`;
 }
 
-function getAllStudents() {
-  return readStudents().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+async function readStudents() {
+  // useCache:false garantit de relire la derniere version ecrite (sinon le
+  // CDN de Vercel peut renvoyer une copie en cache jusqu'a 60s apres une
+  // ecriture, et un parchemin qui vient d'etre cree n'apparaitrait pas tout
+  // de suite dans le tableau de bord).
+  const result = await get(BLOB_PATHNAME, { access: 'private', useCache: false });
+  if (!result || result.statusCode !== 200 || !result.stream) {
+    return [];
+  }
+  const text = await new Response(result.stream).text();
+  return JSON.parse(text || '[]');
 }
 
-function getStudentById(id) {
-  return readStudents().find((s) => s.id === id);
+async function writeStudents(students) {
+  await put(BLOB_PATHNAME, JSON.stringify(students, null, 2), {
+    access: 'private',
+    contentType: 'application/json',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+  });
 }
 
-function getStudentBySlug(slug) {
-  return readStudents().find((s) => s.slug === slug);
+async function getAllStudents() {
+  const students = await readStudents();
+  return students.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-function addStudent(data) {
-  const students = readStudents();
+async function getStudentById(id) {
+  const students = await readStudents();
+  return students.find((s) => s.id === id);
+}
+
+async function getStudentBySlug(slug) {
+  const students = await readStudents();
+  return students.find((s) => s.slug === slug);
+}
+
+async function addStudent(data) {
+  const students = await readStudents();
   const now = new Date().toISOString();
   const student = {
     id: crypto.randomUUID(),
@@ -58,12 +78,12 @@ function addStudent(data) {
     updatedAt: now,
   };
   students.push(student);
-  writeStudents(students);
+  await writeStudents(students);
   return student;
 }
 
-function updateStudent(id, data) {
-  const students = readStudents();
+async function updateStudent(id, data) {
+  const students = await readStudents();
   const index = students.findIndex((s) => s.id === id);
   if (index === -1) return null;
 
@@ -80,14 +100,14 @@ function updateStudent(id, data) {
     updatedAt: new Date().toISOString(),
   };
   students[index] = updated;
-  writeStudents(students);
+  await writeStudents(students);
   return updated;
 }
 
-function deleteStudent(id) {
-  const students = readStudents();
+async function deleteStudent(id) {
+  const students = await readStudents();
   const filtered = students.filter((s) => s.id !== id);
-  writeStudents(filtered);
+  await writeStudents(filtered);
   return filtered.length !== students.length;
 }
 
