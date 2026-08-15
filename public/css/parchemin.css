@@ -25,6 +25,18 @@ body {
   flex-wrap: wrap;
 }
 
+@media (max-width: 480px) {
+  .toolbar {
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .toolbar button {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
 .toolbar button {
   background: #d4af37;
   color: #1c1408;
@@ -60,17 +72,27 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
-  padding: 24px 0 60px;
+  gap: 16px;
+  padding: 16px 8px 40px;
 }
 
 /* ---------- Page ---------- */
+/* .parchemin-page est un "container query container" : toutes les tailles a
+   l'interieur (polices, marges, ornements) sont exprimees en em, qui derive
+   d'une font-size de base en cqw (% de la largeur reelle de la carte). Ainsi,
+   quand la carte retrecit sur mobile (via max-width:100%), tout son contenu
+   retrecit proportionnellement au lieu de rester a la taille "bureau" et de
+   deborder. L'export PDF force de son cote une largeur fixe (794px, voir
+   parchemin.js), donc il retombe toujours sur la taille d'origine, quel que
+   soit l'ecran utilise pour le generer. */
 
 .parchemin-page {
   width: 210mm;
   height: auto;
   max-width: 100%;
   aspect-ratio: 210 / 297;
+  container-type: inline-size;
+  font-size: clamp(10px, 2.016cqw, 16px);
   position: relative;
   background: #f7efd9 radial-gradient(circle at 50% 0%, #fbf5e4, #f2e6c4 85%);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
@@ -78,11 +100,17 @@ body {
   page-break-after: always;
 }
 
+@media (max-width: 480px) {
+  .parchemin-page {
+    font-size: clamp(9px, 2.5cqw, 14px);
+  }
+}
+
 .frame {
   position: absolute;
-  inset: 10mm;
+  inset: 2.36em;
   border: 2px solid #b8860b;
-  padding: 6mm;
+  padding: 1.42em;
   overflow: hidden;
 }
 
@@ -93,15 +121,15 @@ body {
 .type-diplome .frame::before {
   content: '';
   position: absolute;
-  inset: 4mm;
+  inset: 0.94em;
   border: 1px solid #d4af37;
   pointer-events: none;
 }
 
 .corner {
   position: absolute;
-  width: 46px;
-  height: 46px;
+  width: 2.875em;
+  height: 2.875em;
   color: #b8860b;
 }
 
@@ -124,10 +152,10 @@ body {
   transform: rotate(-24deg);
   opacity: 0.06;
   font-family: 'Playfair Display', serif;
-  font-size: 26px;
+  font-size: 1.625em;
   font-weight: 700;
   color: #8a6200;
-  letter-spacing: 3px;
+  letter-spacing: 0.19em;
   text-transform: uppercase;
   pointer-events: none;
   -webkit-user-select: none;
@@ -135,8 +163,19 @@ body {
   line-height: 2.6;
 }
 
+@media (max-width: 480px) {
+  .watermark {
+    font-size: 1.2em;
+    letter-spacing: 0.15em;
+  }
+  
+  .watermark span {
+    padding: 0 0.5em;
+  }
+}
+
 .watermark span {
-  padding: 0 18px;
+  padding: 0 1.125em;
   white-space: nowrap;
 }
 
@@ -149,7 +188,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 8mm 14mm 6mm;
+  padding: 1.89em 3.31em 1.42em;
 }
 
 /* ---------- Emblem (couronne + medaillon + ruban) ---------- */
@@ -158,20 +197,20 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 0.375em;
 }
 
 .crown-icon {
-  width: 44px;
+  width: 2.75em;
   height: auto;
-  margin-bottom: -8px;
+  margin-bottom: -0.5em;
   position: relative;
   z-index: 2;
 }
 
 .emblem-circle {
-  width: 82px;
-  height: 82px;
+  width: 5.125em;
+  height: 5.125em;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #f7e3a1, #b8860b 65%, #8a6200);
   border: 3px double #fffaea;
@@ -187,15 +226,15 @@ body {
 .emblem-monogram {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  font-size: 1.7rem;
+  font-size: 1.7em;
   color: #fffaea;
   letter-spacing: 1px;
 }
 
 .ribbon-wrap {
   position: relative;
-  width: 150px;
-  margin-top: -10px;
+  width: 9.375em;
+  margin-top: -0.625em;
   z-index: 3;
 }
 
@@ -212,12 +251,12 @@ body {
   align-items: center;
   justify-content: center;
   font-family: 'Playfair Display', serif;
-  font-size: 0.56rem;
+  font-size: 0.56em;
   letter-spacing: 1.2px;
   font-weight: 700;
   text-transform: uppercase;
   color: #3a2c0c;
-  padding: 0 12px;
+  padding: 0 0.75em;
   text-align: center;
 }
 
@@ -225,62 +264,68 @@ body {
 
 .kicker {
   font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  letter-spacing: 3px;
+  font-size: 1.4em;
+  letter-spacing: 0.15em;
   color: #6b4e00;
-  margin: 4px 0 2px;
+  margin: 0.25em 0 0.125em;
   text-transform: uppercase;
 }
 
 .subtitle {
-  font-size: 0.95rem;
+  font-size: 0.95em;
   color: #8a7440;
-  letter-spacing: 1.5px;
-  margin-bottom: 12px;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75em;
   text-transform: uppercase;
 }
 
 .intro {
-  max-width: 500px;
-  font-size: 1.05rem;
+  max-width: 31.25em;
+  font-size: 1.05em;
   color: #4a3a1e;
-  margin: 0 auto 4px;
+  margin: 0 auto 0.25em;
   line-height: 1.5;
 }
 
 .felicitations {
   font-family: 'Playfair Display', serif;
-  font-size: 1.9rem;
-  letter-spacing: 6px;
+  font-size: 1.9em;
+  letter-spacing: 0.3em;
   color: #b8860b;
-  margin: 8px 0 2px;
+  margin: 0.5em 0 0.125em;
 }
 
 .to {
   font-style: italic;
   color: #8a7440;
-  margin-bottom: 4px;
+  margin-bottom: 0.25em;
 }
 
 .student-name {
   font-family: 'Great Vibes', cursive;
-  font-size: 3.4rem;
+  font-size: 3.4em;
   color: #7a5a05;
   line-height: 1.1;
-  margin: 2px 0 8px;
+  margin: 0.125em 0 0.5em;
   background: linear-gradient(180deg, #e8c766, #9a7212);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+@media (max-width: 480px) {
+  .student-name {
+    font-size: 2.8em;
+  }
+}
+
 .classe-row {
-  font-size: 1.02rem;
+  font-size: 1.02em;
   color: #4a3a1e;
-  margin-bottom: 12px;
+  margin-bottom: 0.75em;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625em;
 }
 
 .classe-plaque {
@@ -288,40 +333,40 @@ body {
   background: linear-gradient(180deg, #3a2c17, #1c1408);
   color: #f0d488;
   border: 1px solid #b8860b;
-  border-radius: 14px;
-  padding: 4px 20px;
+  border-radius: 0.875em;
+  padding: 0.25em 1.25em;
   font-family: 'Playfair Display', serif;
-  font-size: 0.92rem;
-  letter-spacing: 2px;
+  font-size: 0.92em;
+  letter-spacing: 0.12em;
   box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35);
 }
 
 .body-text {
-  max-width: 520px;
-  font-size: 1.06rem;
+  max-width: 32.5em;
+  font-size: 1.06em;
   color: #4a3a1e;
   line-height: 1.6;
-  margin: 0 auto 6px;
+  margin: 0 auto 0.375em;
 }
 
 .diplome-callout {
   display: block;
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  font-size: 1.35rem;
-  letter-spacing: 1.5px;
+  font-size: 1.35em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #6b4e00;
-  margin: 8px 0;
+  margin: 0.5em 0;
 }
 
 /* ---------- Footer ---------- */
 
 .footer-info-row {
   width: 100%;
-  max-width: 520px;
+  max-width: 32.5em;
   margin-top: auto;
-  padding-top: 14px;
+  padding-top: 0.875em;
   border-top: 1px solid #d8c48f;
   display: flex;
   justify-content: space-between;
@@ -329,8 +374,21 @@ body {
   text-align: left;
 }
 
+@media (max-width: 480px) {
+  .footer-info-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1em;
+  }
+  
+  .footer-info-row .info-lines {
+    text-align: center;
+  }
+}
+
 .footer-info-row .info-lines {
-  font-size: 0.85rem;
+  font-size: 0.85em;
   color: #4a3a1e;
   line-height: 1.6;
 }
@@ -345,37 +403,53 @@ body {
 
 .signature-cursive {
   font-family: 'Great Vibes', cursive;
-  font-size: 1.6rem;
+  font-size: 1.6em;
   color: #7a5a05;
 }
 
 .signature-caption {
-  font-size: 0.78rem;
+  font-size: 0.78em;
   letter-spacing: 1px;
   color: #8a7440;
   border-top: 1px solid #b8860b;
-  padding-top: 3px;
-  margin-top: 2px;
+  padding-top: 0.1875em;
+  margin-top: 0.125em;
 }
 
 .footer-bottom-row {
   width: 100%;
-  max-width: 520px;
+  max-width: 32.5em;
   display: grid;
-  grid-template-columns: 90px 1fr 90px;
+  grid-template-columns: 5.625em 1fr 5.625em;
   align-items: center;
-  margin-top: 14px;
+  margin-top: 0.875em;
+}
+
+@media (max-width: 480px) {
+  .footer-bottom-row {
+    grid-template-columns: 1fr;
+    gap: 0.5em;
+    text-align: center;
+  }
+  
+  .medal {
+    justify-self: center;
+  }
+  
+  .footer-brand {
+    grid-column: 1;
+  }
 }
 
 .medal {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375em;
   justify-self: start;
 }
 
 .medal-svg {
-  width: 52px;
+  width: 3.25em;
   height: auto;
   flex-shrink: 0;
 }
@@ -384,7 +458,7 @@ body {
   display: flex;
   flex-direction: column;
   font-family: 'Playfair Display', serif;
-  font-size: 0.5rem;
+  font-size: 0.5em;
   letter-spacing: 1px;
   color: #8a6200;
   font-weight: 700;
@@ -401,8 +475,8 @@ body {
 .footer-brand .brand-name {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  letter-spacing: 2px;
-  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  font-size: 0.95em;
   color: #4a3a1e;
 }
 
@@ -411,8 +485,8 @@ body {
 .bottom-banner-wrap {
   position: relative;
   width: 100%;
-  max-width: 300px;
-  margin: 6px auto 0;
+  max-width: 18.75em;
+  margin: 0.375em auto 0;
 }
 
 .bottom-banner-svg {
@@ -432,8 +506,8 @@ body {
   justify-content: center;
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
+  font-size: 0.8em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #3a2c0c;
   text-align: center;
@@ -443,26 +517,32 @@ body {
 
 .verso-content {
   justify-content: flex-start;
-  padding: 14mm 24mm 10mm;
+  padding: 3.31em 5.67em 2.36em;
+}
+
+@media (max-width: 480px) {
+  .verso-content {
+    padding: 2.5em 2em 1.5em;
+  }
 }
 
 .grad-emblem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 0.625em;
 }
 
 .drape-svg {
-  width: 70px;
+  width: 4.375em;
   color: #b8860b;
-  margin-bottom: -4px;
+  margin-bottom: -0.25em;
 }
 
 .grad-circle-wrap {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 6em;
+  height: 6em;
 }
 
 .laurel-svg {
@@ -473,7 +553,7 @@ body {
 
 .grad-circle {
   position: absolute;
-  inset: 18px;
+  inset: 1.125em;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #f7e3a1, #b8860b 65%, #8a6200);
   border: 2px solid #7a5a05;
@@ -489,7 +569,7 @@ body {
 
 .verso-content h2.script-title {
   font-family: 'Great Vibes', cursive;
-  font-size: 2.8rem;
+  font-size: 2.8em;
   color: #7a5a05;
   margin: 0 0 0;
   background: linear-gradient(180deg, #e8c766, #9a7212);
@@ -501,19 +581,26 @@ body {
 .verso-content .sub-caps {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  letter-spacing: 3px;
-  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  font-size: 0.9em;
   color: #6b4e00;
-  margin-bottom: 14px;
+  margin-bottom: 0.875em;
 }
 
 .verso-content p {
-  max-width: 460px;
-  font-size: 1.06rem;
+  max-width: 28.75em;
+  font-size: 1.06em;
   line-height: 1.65;
   color: #4a3a1e;
-  margin: 0 auto 12px;
+  margin: 0 auto 0.75em;
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .verso-content p {
+    font-size: 0.95em;
+    line-height: 1.5;
+  }
 }
 
 .verso-content p.left {
@@ -529,9 +616,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  width: 240px;
-  margin: 8px auto 18px;
+  gap: 0.625em;
+  width: 15em;
+  margin: 0.5em auto 1.125em;
 }
 
 .divider-line {
@@ -541,20 +628,20 @@ body {
 }
 
 .divider-dot {
-  width: 8px;
-  height: 8px;
+  width: 0.5em;
+  height: 0.5em;
   background: #b8860b;
   transform: rotate(45deg);
   flex-shrink: 0;
 }
 
 .thanks-heading {
-  margin-top: 4px;
+  margin-top: 0.25em;
 }
 
 .thanks-heading .script-sub {
   font-family: 'Great Vibes', cursive;
-  font-size: 1.6rem;
+  font-size: 1.6em;
   color: #7a5a05;
   display: block;
 }
@@ -562,16 +649,16 @@ body {
 .thanks-heading .caps-sub {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  letter-spacing: 3px;
-  font-size: 1rem;
+  letter-spacing: 0.15em;
+  font-size: 1em;
   color: #6b4e00;
   display: block;
-  margin-bottom: 14px;
+  margin-bottom: 0.875em;
 }
 
 .verso-emblem-wrap {
   margin-top: auto;
-  padding-top: 10px;
+  padding-top: 0.625em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -581,24 +668,24 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 0.25em;
 }
 
 .emblem-circle.small {
-  width: 56px;
-  height: 56px;
-  margin-bottom: 4px;
+  width: 3.5em;
+  height: 3.5em;
+  margin-bottom: 0.25em;
 }
 
 .emblem-circle.small .emblem-monogram {
-  font-size: 1.15rem;
+  font-size: 1.15em;
 }
 
 .verso-crest .brand-name {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  letter-spacing: 2px;
-  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  font-size: 0.82em;
   color: #4a3a1e;
 }
 
@@ -609,4 +696,56 @@ body {
   .no-print { display: none !important; }
   .parchemin-page { box-shadow: none; margin: 0; }
   #parchemin-content { padding: 0; gap: 0; }
+}
+
+/* ---------- Mobile optimizations ---------- */
+
+@media (max-width: 480px) {
+  #parchemin-content {
+    padding: 10px 4px 20px;
+  }
+  
+  .frame {
+    inset: 1.5em;
+    padding: 1em;
+  }
+  
+  .content {
+    padding: 1.5em 2em 1em;
+  }
+  
+  .corner {
+    width: 2em;
+    height: 2em;
+  }
+  
+  .emblem-circle {
+    width: 4em;
+    height: 4em;
+  }
+  
+  .ribbon-wrap {
+    width: 7em;
+  }
+  
+  .kicker {
+    font-size: 1.1em;
+  }
+  
+  .felicitations {
+    font-size: 1.5em;
+  }
+  
+  .diplome-callout {
+    font-size: 1.1em;
+  }
+  
+  .body-text {
+    font-size: 0.95em;
+  }
+  
+  .classe-row {
+    flex-direction: column;
+    gap: 0.3em;
+  }
 }

@@ -23,6 +23,7 @@
       <% if (students.length === 0) { %>
         <div class="empty-state">Aucun parchemin pour le moment. Cree le premier !</div>
       <% } else { %>
+        <div class="table-wrap">
         <table>
           <thead>
             <tr>
@@ -60,6 +61,7 @@
             <% }); %>
           </tbody>
         </table>
+        </div>
       <% } %>
     </div>
   </div>

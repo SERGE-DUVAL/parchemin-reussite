@@ -43,24 +43,46 @@ async function downloadParchemin(filenameBase) {
   try {
     await waitForFonts();
 
-    // Echelle plus basse sur petit ecran / mobile pour eviter de saturer
-    // la memoire du navigateur (canvas trop grand = plantage sur telephone).
-    const scale = window.innerWidth < 600 ? 1.5 : 2;
+    // Echelle adaptée selon la taille de l'écran pour éviter les crashs mémoire
+    // Sur mobile très petit, on utilise une échelle encore plus basse
+    const isMobile = window.innerWidth < 600;
+    const isSmallMobile = window.innerWidth < 400;
+    let scale = isSmallMobile ? 1 : (isMobile ? 1.5 : 2);
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
     for (let i = 0; i < pages.length; i++) {
-      const canvas = await capturePageToCanvas(pages[i], scale);
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+      try {
+        const canvas = await capturePageToCanvas(pages[i], scale);
+        const imgData = canvas.toDataURL('image/jpeg', 0.85);
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+        
+        // Libérer la mémoire du canvas après chaque page
+        canvas.width = 0;
+        canvas.height = 0;
+      } catch (pageErr) {
+        console.error('Erreur page ' + i, pageErr);
+        if (scale > 1) {
+          // Fallback: réessayer avec une échelle plus basse
+          scale = scale * 0.7;
+          const canvas = await capturePageToCanvas(pages[i], scale);
+          const imgData = canvas.toDataURL('image/jpeg', 0.8);
+          if (i > 0) pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+          canvas.width = 0;
+          canvas.height = 0;
+        } else {
+          throw pageErr;
+        }
+      }
     }
 
     pdf.save(`parchemin-${filenameBase || 'famille-tepomo'}.pdf`);
   } catch (err) {
     console.error(err);
-    alert("Une erreur est survenue lors de la generation du PDF. Reessaie, ou utilise le bouton Partager pour envoyer le lien du parchemin.");
+    alert("Une erreur est survenue lors de la generation du PDF. Sur mobile, utilise le bouton Partager pour envoyer le lien du parchemin.");
   } finally {
     btn.disabled = false;
     btn.textContent = originalLabel;

@@ -11,5 +11,31 @@
     "dateEmission": "2026-08-14",
     "createdAt": "2026-08-14T02:07:47.665Z",
     "updatedAt": "2026-08-14T02:07:47.665Z"
+  },
+  {
+    "id": "0b1d9d5c-5625-403d-b25a-5bb623bec3d3",
+    "slug": "nacyr-job-f162f8",
+    "prenom": "nacyr",
+    "nom": "job",
+    "classe": "Terminale C",
+    "anneeAcademique": "2025/2026",
+    "type": "diplome",
+    "diplome": "",
+    "dateEmission": "2026-08-14",
+    "createdAt": "2026-08-14T05:09:15.080Z",
+    "updatedAt": "2026-08-14T05:09:15.080Z"
+  },
+  {
+    "id": "7abfc8f1-34b9-4cc6-9546-08a37884ed76",
+    "slug": "nelly-stella-sop-kemayou-cbfa07",
+    "prenom": "Nelly Stella",
+    "nom": "Sop Kemayou",
+    "classe": "Terminale C",
+    "anneeAcademique": "2025/2026",
+    "type": "diplome",
+    "diplome": "",
+    "dateEmission": "2026-08-14",
+    "createdAt": "2026-08-14T05:20:19.108Z",
+    "updatedAt": "2026-08-14T05:20:19.108Z"
   }
 ]

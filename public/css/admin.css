@@ -20,10 +20,12 @@ body {
 .topbar {
   background: linear-gradient(135deg, #2b2114, #4a3a20);
   color: var(--gold-light);
-  padding: 18px 28px;
+  padding: 14px 20px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .topbar .brand {
@@ -113,13 +115,21 @@ h1 {
 
 .actions-row {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
 table {
   width: 100%;
+  min-width: 620px;
   border-collapse: collapse;
 }
 
@@ -197,7 +207,8 @@ form.stacked select {
 
 .radio-group {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 12px 20px;
   margin-bottom: 16px;
 }
 
@@ -232,4 +243,29 @@ form.stacked select {
   font-size: 0.8rem;
   color: #8a7d5e;
   word-break: break-all;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin: 18px auto;
+    padding: 0 14px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .login-wrap {
+    margin: 48px auto;
+    max-width: 100%;
+    padding: 0 14px;
+  }
+
+  .topbar .brand {
+    font-size: 1.1rem;
+  }
 }
