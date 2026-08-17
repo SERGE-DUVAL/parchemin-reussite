@@ -18,15 +18,38 @@ const A4_WIDTH_PX = Math.round((210 / 25.4) * 96);
 const A4_HEIGHT_PX = Math.round((297 / 25.4) * 96);
 
 async function capturePageToCanvas(pageEl, scale) {
-  return html2canvas(pageEl, {
-    scale,
-    useCORS: true,
-    backgroundColor: '#ffffff',
-    width: A4_WIDTH_PX,
-    height: A4_HEIGHT_PX,
-    windowWidth: A4_WIDTH_PX,
-    windowHeight: A4_HEIGHT_PX,
-  });
+  const originalInlineStyle = pageEl.getAttribute('style');
+
+  // html2canvas ne supporte pas correctement la propriete CSS aspect-ratio :
+  // sans intervention, la hauteur de .parchemin-page (qui en derive) peut etre
+  // mal calculee pendant la capture, ce qui laisse des zones vides dans le PDF
+  // au lieu de remplir toute la page A4. On fixe donc temporairement des
+  // dimensions en pixels avant de capturer, puis on restaure le style
+  // d'origine juste apres (le rendu a l'ecran n'est pas affecte).
+  pageEl.style.width = `${A4_WIDTH_PX}px`;
+  pageEl.style.height = `${A4_HEIGHT_PX}px`;
+  pageEl.style.maxWidth = 'none';
+  pageEl.style.aspectRatio = 'auto';
+
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  try {
+    return await html2canvas(pageEl, {
+      scale,
+      useCORS: true,
+      backgroundColor: '#f7efd9',
+      width: A4_WIDTH_PX,
+      height: A4_HEIGHT_PX,
+      windowWidth: A4_WIDTH_PX,
+      windowHeight: A4_HEIGHT_PX,
+    });
+  } finally {
+    if (originalInlineStyle === null) {
+      pageEl.removeAttribute('style');
+    } else {
+      pageEl.setAttribute('style', originalInlineStyle);
+    }
+  }
 }
 
 async function downloadParchemin(filenameBase) {
