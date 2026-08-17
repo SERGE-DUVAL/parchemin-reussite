@@ -73,6 +73,7 @@ async function addStudent(data) {
     anneeAcademique: data.anneeAcademique.trim(),
     type: data.type === 'diplome' ? 'diplome' : 'passage',
     diplome: data.type === 'diplome' ? (data.diplome || '').trim() : '',
+    classeSuperieure: data.type === 'passage' ? (data.classeSuperieure || '').trim() : '',
     dateEmission: data.dateEmission || now.slice(0, 10),
     createdAt: now,
     updatedAt: now,
@@ -96,6 +97,7 @@ async function updateStudent(id, data) {
     anneeAcademique: data.anneeAcademique.trim(),
     type: data.type === 'diplome' ? 'diplome' : 'passage',
     diplome: data.type === 'diplome' ? (data.diplome || '').trim() : '',
+    classeSuperieure: data.type === 'passage' ? (data.classeSuperieure || '').trim() : '',
     dateEmission: data.dateEmission || existing.dateEmission,
     updatedAt: new Date().toISOString(),
   };

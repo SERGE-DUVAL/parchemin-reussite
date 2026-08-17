@@ -56,6 +56,14 @@
           <div id="diplome-hint" style="margin:-10px 0 16px; font-size:0.85rem; color:#8a7440;"></div>
         </div>
 
+        <div id="classe-superieure-field" style="display:none;">
+          <label for="classeSuperieure">Classe superieure prevue</label>
+          <input type="text" id="classeSuperieure" name="classeSuperieure"
+            placeholder="Calculee automatiquement depuis la classe (modifiable)"
+            value="<%= student ? (student.classeSuperieure || '') : '' %>" />
+          <div id="classe-superieure-hint" style="margin:-10px 0 16px; font-size:0.85rem; color:#8a7440;"></div>
+        </div>
+
         <label for="dateEmission">Date d'emission</label>
         <input type="date" id="dateEmission" name="dateEmission"
           value="<%= student ? student.dateEmission : new Date().toISOString().slice(0,10) %>" />
@@ -69,17 +77,21 @@
     const diplomeRadio = document.getElementById('type-diplome');
     const passageRadio = document.getElementById('type-passage');
     const diplomeField = document.getElementById('diplome-field');
+    const classeSuperieureField = document.getElementById('classe-superieure-field');
     const classeInput = document.getElementById('classe');
     const diplomeInput = document.getElementById('diplome');
     const diplomeHint = document.getElementById('diplome-hint');
+    const classeSuperieureInput = document.getElementById('classeSuperieure');
+    const classeSuperieureHint = document.getElementById('classe-superieure-hint');
 
-    function toggleDiplomeField() {
+    function toggleFields() {
       diplomeField.style.display = diplomeRadio.checked ? 'block' : 'none';
+      classeSuperieureField.style.display = passageRadio.checked ? 'block' : 'none';
     }
 
-    diplomeRadio.addEventListener('change', toggleDiplomeField);
-    passageRadio.addEventListener('change', toggleDiplomeField);
-    toggleDiplomeField();
+    diplomeRadio.addEventListener('change', toggleFields);
+    passageRadio.addEventListener('change', toggleFields);
+    toggleFields();
 
     // Reproduit cote client la deduction du diplome camerounais faite par
     // utils/diplome.js, uniquement pour l'aperçu affiche a l'admin.
@@ -115,9 +127,103 @@
         : "Classe non reconnue : indique un intitule manuellement si besoin.";
     }
 
-    classeInput.addEventListener('input', updateDiplomeHint);
+    // Logique de progression de classe (cote client pour l'aperçu)
+    function getNextClass(currentClass) {
+      const classe = (currentClass || '').trim();
+      if (!classe) return '';
+      
+      const flat = classe.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+      
+      // Maternelle
+      const maternelle = {
+        'ps': 'ms', 'petite section': 'moyenne section',
+        'ms': 'gs', 'moyenne section': 'grande section',
+        'gs': 'cp', 'grande section': 'cp',
+      };
+      if (maternelle[flat]) return maternelle[flat];
+      
+      // Primaire
+      const primaire = {
+        'cp': 'ce1', 'ce1': 'ce2', 'ce2': 'cm1', 'cm1': 'cm2', 'cm2': '6ème',
+      };
+      if (primaire[flat]) return primaire[flat];
+      
+      // Collège
+      const college = {
+        '6ème': '5ème', '6eme': '5eme',
+        '5ème': '4ème', '5eme': '4eme',
+        '4ème': '3ème', '4eme': '3eme',
+        '3ème': 'seconde', '3eme': 'seconde',
+      };
+      if (college[flat]) return college[flat];
+      
+      // Lycée
+      const lycee = {
+        'seconde': 'première', '2nde': '1ère',
+        'première': 'terminale', '1ère': 'terminale',
+        'terminale': 'enseignement supérieur', 'tle': 'enseignement supérieur',
+      };
+      if (lycee[flat]) return lycee[flat];
+      
+      // Système anglophone
+      const anglophone = {
+        'form 1': 'form 2', 'form1': 'form2',
+        'form 2': 'form 3', 'form2': 'form3',
+        'form 3': 'form 4', 'form3': 'form4',
+        'form 4': 'form 5', 'form4': 'form5',
+        'form 5': 'lower sixth', 'form5': 'lower sixth',
+        'lower sixth': 'upper sixth', 'lower 6th': 'upper 6th',
+        'upper sixth': 'enseignement supérieur', 'upper 6th': 'enseignement supérieur',
+      };
+      if (anglophone[flat]) return anglophone[flat];
+      
+      // Enseignement supérieur (années)
+      const yearMatch = classe.match(/^(\d+)\s*(ère|eme|e|er|year|année)\s*(.+)$/i);
+      if (yearMatch) {
+        const currentYear = parseInt(yearMatch[1], 10);
+        const field = yearMatch[3].trim();
+        const nextYear = currentYear + 1;
+        return field ? `${nextYear}ème année ${field}` : `${nextYear}ème année`;
+      }
+      
+      return 'Classe supérieure';
+    }
+
+    function updateClasseSuperieureHint() {
+      if (classeSuperieureInput.value.trim()) {
+        classeSuperieureHint.textContent = '';
+        return;
+      }
+      const suggestion = getNextClass(classeInput.value);
+      classeSuperieureHint.textContent = suggestion
+        ? `Classe superieure calculee : "${suggestion}"`
+        : "Classe non reconnue : indique manuellement si besoin.";
+    }
+
+    // Auto-remplissage de la classe supérieure quand la classe change
+    // et que l'utilisateur n'a pas encore modifié manuellement la valeur
+    let userModifiedClasseSuperieure = false;
+    classeSuperieureInput.addEventListener('input', () => {
+      userModifiedClasseSuperieure = true;
+    });
+
+    classeInput.addEventListener('input', () => {
+      updateDiplomeHint();
+      if (passageRadio.checked && !userModifiedClasseSuperieure) {
+        const suggestion = getNextClass(classeInput.value);
+        if (suggestion && suggestion !== 'Classe supérieure') {
+          classeSuperieureInput.value = suggestion;
+        }
+      }
+      updateClasseSuperieureHint();
+    });
+
     diplomeInput.addEventListener('input', updateDiplomeHint);
+    classeSuperieureInput.addEventListener('input', updateClasseSuperieureHint);
+    
+    // Initialisation
     updateDiplomeHint();
+    updateClasseSuperieureHint();
   </script>
 </body>
 </html>
